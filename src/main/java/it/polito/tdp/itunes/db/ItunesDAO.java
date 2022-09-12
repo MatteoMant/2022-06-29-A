@@ -36,6 +36,31 @@ public class ItunesDAO {
 		return result;
 	}
 	
+	public List<Album> getAllAlbumsWithCanzoni(int n){
+		final String sql = "SELECT a.* "
+				+ "FROM track t, album a "
+				+ "WHERE t.AlbumId = a.ALbumId "
+				+ "GROUP BY AlbumId "
+				+ "HAVING COUNT(*) > ?";
+		List<Album> result = new LinkedList<>();
+		
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, n);
+			ResultSet res = st.executeQuery();
+
+			while (res.next()) {
+				result.add(new Album(res.getInt("AlbumId"), res.getString("Title")));
+			}
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException("SQL Error");
+		}
+		return result;
+	}
+	
 	public List<Artist> getAllArtists(){
 		final String sql = "SELECT * FROM Artist";
 		List<Artist> result = new LinkedList<>();
@@ -139,4 +164,25 @@ public class ItunesDAO {
 		return result;
 	}
 	
+	public int calcolaNumCanzoni(Album album){
+		final String sql = "SELECT COUNT(*) AS numCanzoni "
+				+ "FROM track "
+				+ "WHERE AlbumId = ?";
+		
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, album.getAlbumId());
+			ResultSet res = st.executeQuery();
+			
+			res.first();
+			int numCanzoni = res.getInt("numCanzoni");
+
+			conn.close();
+			return numCanzoni;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException("SQL Error");
+		}
+	}
 }
