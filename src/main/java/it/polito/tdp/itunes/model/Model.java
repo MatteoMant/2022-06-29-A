@@ -85,6 +85,18 @@ public class Model {
 		return bilancio;
 	}
 	
+	public Album calcolaBilancioMassimo() {
+		int massimo = Integer.MIN_VALUE;
+		Album albumMassimo = null;
+		for (Album a : this.grafo.vertexSet()) {
+			if (calcolaBilancio(a) > massimo) {
+				massimo = calcolaBilancio(a);
+				albumMassimo = a;
+			}
+		}
+		return albumMassimo;
+	}
+	
 	public List<Album> calcolaPercorso(Album a1, Album a2, int soglia){
 		this.best = new LinkedList<>();
 		List<Album> parziale = new LinkedList<>();
@@ -101,7 +113,7 @@ public class Model {
 		Album ultimo = parziale.get(parziale.size()-1);
 		if (ultimo.equals(a2)) {
 			if (calcolaNumVerticiConBilancioMaggioreVerticePartenza(parziale) 
-					> calcolaNumVerticiConBilancioMaggioreVerticePartenza(best)) {
+					>= calcolaNumVerticiConBilancioMaggioreVerticePartenza(best)) {
 				best = new LinkedList<>(parziale);
 				return;
 			} else {
@@ -118,7 +130,6 @@ public class Model {
 					cerca(parziale, livello+1, a2, soglia);
 					parziale.remove(parziale.size()-1);
 				}
-						
 			}
 		}
 	}

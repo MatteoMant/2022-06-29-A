@@ -62,7 +62,7 @@ public class FXMLController {
     	}
     	
     	List<AlbumAndBilancio> successori = this.model.getAllSuccessori(a1);
-    	if (successori == null) {
+    	if (successori == null || successori.size() == 0) {
     		txtResult.appendText("Il vertice selezionato non ha vertici successori!\n");
     		return;
     	}
